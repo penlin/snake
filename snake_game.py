@@ -29,6 +29,8 @@ class Snake():
         self.y = self.y + self.yspeed
         if self.x < 0 or self.y < 0 or self.x >= size[0] or self.y >= size[1]:
             return False
+        if (self.x, self.y) in self.tail:
+            return False
         return True
 
     def eat(self, x, y):
