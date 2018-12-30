@@ -24,18 +24,12 @@ class Snake():
     def update(self, size):
         self.x = self.x + self.xspeed
         self.y = self.y + self.yspeed
-        if self.x < 0:
-            self.x = 0
-        if self.y < 0:
-            self.y = 0
-        if self.x >= size[0]:
-            self.x = size[0]-1
-        if self.y >= size[1]:
-            self.y = size[1]-1
+        if self.x < 0 or self.y < 0 or self.x >= size[0] or self.y >= size[1]:
+            return False
+        return True
 
     def eat(self, x, y):
         return same_pos((self.x, self.y), (x, y))
-
 
 class SnakeGame(Game):
     candy = (0, 0)
@@ -50,7 +44,9 @@ class SnakeGame(Game):
         self.score += 1
 
     def update(self, game_inst):
-        game_inst.update(self.size)
+        if not game_inst.update(self.size):
+            self.status = GameStatus.EGameOver
+            return
         if game_inst.eat(self.candy[0], self.candy[1]):
             self.create_candy()
 
@@ -64,7 +60,6 @@ class SnakeGame(Game):
         cv2.putText(canvas, 'Score:{}'.format(self.score), (win_w - 100, win_h), cv2.FONT_HERSHEY_PLAIN, 1, (200, 200, 255), 1)
 
     def onKeyPressed(self, key, game_inst):
-        print('{} pressed'.format(key))
         if key == ord('i'):
             game_inst.dir(0, -1)
         elif key == ord('k'):
