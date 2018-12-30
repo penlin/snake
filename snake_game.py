@@ -16,6 +16,8 @@ class Snake():
         self.yspeed = 0
     
     def dir(self, x, y):
+        if self.xspeed == -x and self.yspeed == -y:
+            return 
         self.xspeed = x
         self.yspeed = y
     
