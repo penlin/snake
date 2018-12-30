@@ -64,6 +64,11 @@ class Game(abc.ABC):
         self.draw(canvas, game_inst)
         cv2.imshow(self._title, canvas)
 
+    def rect(self, canvas, x, y, color):
+        left = int(x * self.scl)
+        top = int(y * self.scl)
+        cv2.rectangle(canvas, (left, top), (left + self.scl, top + self.scl), color, -1)
+
     def drawMain(self, canvas):
         win_w = int(self.size[0] * self.scl)
         win_h = int(self.size[1] * self.scl)
