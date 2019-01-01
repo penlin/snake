@@ -8,7 +8,7 @@ conda install opencv numpy
 ### How to play
 ```
 usage: snake_game.py [-h] [--resume RECORD] [--fps FPS] [--size SIZE]
-                     [--scale SCALE]
+                     [--scale SCALE] [--ai AI_name]
 
 Play Snake Game
 
@@ -18,4 +18,5 @@ optional arguments:
   --fps FPS        frame rate
   --size SIZE      game board size
   --scale SCALE    grid size
+  --ai AI_name     AI name to run the snake Game
 ```
