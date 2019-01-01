@@ -4,6 +4,7 @@ import sys
 import argparse
 import pickle
 import random as rand
+import time
 
 def dist(p1, p2):
     return (p1[0]-p2[0])**2 + (p1[1]-p2[1])**2
@@ -91,6 +92,19 @@ class SnakeGame(Game):
             game_inst.dir(1, 0)
 
 
+def SimpleAI(inst):
+    key = cv2.waitKey(1)
+    if key in [ord('q'), ord('p'), 27]:
+        return key
+    if inst.xspeed == 0:
+        if (inst.y + inst.yspeed) < 0 or (inst.y + inst.yspeed) >= inst.size[1]:
+            return ord('j') if inst.x > 0 else ord('l')
+    else:
+        if (inst.x + inst.xspeed) < 0 or (inst.x + inst.xspeed) >= inst.size[0]:
+            return ord('i') if inst.y > 0 else ord('k')
+    return 0xFF
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Play Snake Game')
     parser.add_argument('--resume', dest='record',
@@ -98,9 +112,13 @@ if __name__ == '__main__':
     parser.add_argument('--fps', default=8, type=int, help='frame rate')
     parser.add_argument('--size', default='30x30', help='game board size')
     parser.add_argument('--scale', default=15, type=int, help='grid size')
+    parser.add_argument('--ai', help='AI name to run the Snake Game')
     args = parser.parse_args()
     size = tuple(map(int, args.size.split('x')))
-    game = SnakeGame(size=size, frame_rate=args.fps, scale=args.scale)
+    controller = None
+    if args.ai:
+        controller = SimpleAI
+    game = SnakeGame(size=size, frame_rate=args.fps, scale=args.scale, controller=controller)
     if args.record:
         with open(args.record, 'rb') as fin:
             obj = pickle.load(fin)
