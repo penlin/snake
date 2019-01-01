@@ -16,7 +16,6 @@ class GameStatus(enum.Enum):
 class Game(abc.ABC):
     size = (250, 250)
     status = GameStatus.EGameNotInit
-    frame_rate = 50
     scl = 5
     _status_bar_height = 5
     _title = 'A New Game'
@@ -25,17 +24,17 @@ class Game(abc.ABC):
     def __init__(self, title, size, frame_rate=50, scale=50, controller=None):
         self._title = title
         self.size = size
-        self.frame_rate=frame_rate
         self.scl = scale
         self.status = GameStatus.EGameReady
         if controller is None:
-            delay = int(1000/self.frame_rate)
+            delay = int(1000/frame_rate)
             self.controller = lambda inst: cv2.waitKey(delay)
         else:
             self.controller = controller
 
-    def start(self, game_inst):
+    def start(self, game_inst, start_time=0):
         self.status = GameStatus.EGameStart
+        self._time = start_time
         cv2.namedWindow(self._title)
         cv2.moveWindow(self._title, 200, 0)
         self.w = int(self.size[0] * self.scl)
@@ -71,7 +70,8 @@ class Game(abc.ABC):
     def rect(self, canvas, x, y, color):
         left = int(x * self.scl)
         top = int(y * self.scl)
-        cv2.rectangle(canvas, (left, top), (left + self.scl, top + self.scl), color, -1)
+        width = int(self.scl * 3 / 4)
+        cv2.rectangle(canvas, (left, top), (left + width, top + width), color, -1)
 
     def drawMain(self, canvas):
         win_w = int(self.size[0] * self.scl)

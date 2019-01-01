@@ -59,6 +59,7 @@ class Snake():
 
 class SnakeGame(Game):
     def __init__(self, size=(50, 50), frame_rate=60, scale=10, controller=None):
+        print('size={}, fps={}, scale={}'.format(size, frame_rate, scale))
         super().__init__('Snake Game', size, frame_rate=frame_rate, scale=scale, controller=controller)
 
     def update(self, game_inst):
@@ -94,9 +95,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Play Snake Game')
     parser.add_argument('--resume', dest='record',
                          help='resume from the specified saved record')
-    parser.add_argument('--fps', default=10, type=int, help='frame rate')
-    parser.add_argument('--size', default='50x50', help='game board size')
-    parser.add_argument('--scale', default=10, type=int, help='grid size')
+    parser.add_argument('--fps', default=8, type=int, help='frame rate')
+    parser.add_argument('--size', default='30x30', help='game board size')
+    parser.add_argument('--scale', default=15, type=int, help='grid size')
     args = parser.parse_args()
     size = tuple(map(int, args.size.split('x')))
     game = SnakeGame(size=size, frame_rate=args.fps, scale=args.scale)
