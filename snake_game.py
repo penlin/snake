@@ -39,11 +39,10 @@ class Snake():
             self.tail = self.tail[1:] + [(self.x, self.y)]
         self.x = self.x + self.xspeed
         self.y = self.y + self.yspeed
-        if self.x < 0 or self.y < 0 or self.x >= self.size[0] or self.y >= self.size[1]:
-            return False
-        if (self.x, self.y) in self.tail:
-            return False
-        return True
+        return self.dead()
+
+    def dead(self):
+        return 0 <= self.x < self.size[0] and 0 <= self.y < self.size[1] and (self.x, self.y) not in self.tail
 
     def create_candy(self):
         num = rand.randint(0, self.size[0] * self.size[1]-1)
@@ -60,7 +59,6 @@ class Snake():
 
 class SnakeGame(Game):
     def __init__(self, size=(50, 50), frame_rate=60, scale=10, controller=None):
-        print('size={}, fps={}, scale={}'.format(size, frame_rate, scale))
         super().__init__('Snake Game', size, frame_rate=frame_rate, scale=scale, controller=controller)
 
     def update(self, game_inst):
@@ -115,13 +113,16 @@ if __name__ == '__main__':
     parser.add_argument('--ai', help='AI name to run the Snake Game')
     args = parser.parse_args()
     size = tuple(map(int, args.size.split('x')))
-    controller = None
-    if args.ai:
-        controller = SimpleAI
-    game = SnakeGame(size=size, frame_rate=args.fps, scale=args.scale, controller=controller)
     if args.record:
         with open(args.record, 'rb') as fin:
             obj = pickle.load(fin)
+        size = obj.size
     else:
         obj = Snake(game.size)
+
+    controller = None
+    if args.ai:
+        controller = SimpleAI
+
+    game = SnakeGame(size=size, frame_rate=args.fps, scale=args.scale, controller=controller)
     game.start(obj)
