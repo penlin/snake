@@ -22,16 +22,20 @@ class Game(abc.ABC):
     _title = 'A New Game'
     _time = 0
 
-    def __init__(self, title, size, frame_rate=50, scale=50):
+    def __init__(self, title, size, frame_rate=50, scale=50, controller=None):
         self._title = title
         self.size = size
         self.frame_rate=frame_rate
         self.scl = scale
         self.status = GameStatus.EGameReady
+        if controller is None:
+            delay = int(1000/self.frame_rate)
+            self.controller = lambda inst: cv2.waitKey(delay)
+        else:
+            self.controller = controller
 
     def start(self, game_inst):
         self.status = GameStatus.EGameStart
-        delay = int(1000/self.frame_rate)
         cv2.namedWindow(self._title)
         cv2.moveWindow(self._title, 200, 0)
         self.w = int(self.size[0] * self.scl)
@@ -44,7 +48,7 @@ class Game(abc.ABC):
                 if self.status in [GameStatus.EGameOver, GameStatus.EGameVictory]:
                     break
             self.show(canvas, game_inst)
-            key = cv2.waitKey(delay)                
+            key = self.controller(game_inst)
             if key == ord('p'):
                 if self.status == GameStatus.EGamePause:
                     self.status = GameStatus.EGameStart
@@ -57,7 +61,7 @@ class Game(abc.ABC):
 
         self.show(canvas, game_inst)
         cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        cv2.destroyAllWindows()        
 
     def show(self, canvas, game_inst):
         self.drawMain(canvas)
