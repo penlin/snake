@@ -20,6 +20,7 @@ optional arguments:
   --scale SCALE    grid size
   --ai AI_name     AI name to run the snake Game
 ```
+* ``FPS == 0`` would not show any window/GUI util the game finished
 
 #### AI 
 * there are several AI supported :

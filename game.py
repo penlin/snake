@@ -26,6 +26,9 @@ class Game(abc.ABC):
         self.size = size
         self.scl = scale
         self.status = GameStatus.EGameReady
+        self.display = self.show
+        if frame_rate <= 0:
+            self.display = lambda *x: None
         if controller is None:
             delay = int(1000/frame_rate)
             self.controller = lambda inst: cv2.waitKey(delay)
@@ -46,7 +49,7 @@ class Game(abc.ABC):
                 self.update(game_inst)
                 if self.status in [GameStatus.EGameOver, GameStatus.EGameVictory]:
                     break
-            self.show(canvas, game_inst)
+            self.display(canvas, game_inst)
             key = self.controller(game_inst)
             if key == ord('p'):
                 if self.status == GameStatus.EGamePause:
