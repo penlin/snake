@@ -20,3 +20,7 @@ optional arguments:
   --scale SCALE    grid size
   --ai AI_name     AI name to run the snake Game
 ```
+
+#### AI 
+* there are several AI supported :
+  1. __SimpleAI__: which would only go to the border and circling through the border. It only can win the game when Snake Board size if _Nx2_ or _2xN_
