@@ -39,15 +39,17 @@ class Snake():
             self.tail = self.tail[1:] + [(self.x, self.y)]
         self.x = self.x + self.xspeed
         self.y = self.y + self.yspeed
-        return self.dead()
+
+    def win(self):
+        return (self.size[0] * self.size[1] - 1) == len(self.tail)
 
     def dead(self):
-        return 0 <= self.x < self.size[0] and 0 <= self.y < self.size[1] and (self.x, self.y) not in self.tail
+        return not (0 <= self.x < self.size[0] and 0 <= self.y < self.size[1] and (self.x, self.y) not in self.tail)
 
     def create_candy(self):
         getNum = lambda pt: pt[1] * self.size[0] + pt[0]
         max_num = self.size[0] * self.size[1] - 1
-        invalid = list(map(getNum, self.tail))
+        invalid = list(map(getNum, self.tail)) + [getNum((self.x, self.y))]
         num = rand.randint(0, max_num)
         while num in invalid:
             num = rand.randint(0, max_num)
@@ -55,17 +57,23 @@ class Snake():
 
     def eat(self):
         if same_pos((self.x, self.y), self.candy):
-            self.tail.append((self.x, self.y))
+            if len(self.tail) > 0:
+                self.tail.insert(0, self.tail[0])
+            else:
+                self.tail.append((self.x, self.y))
             self.create_candy()
-            return True
-        return False
+
 
 class SnakeGame(Game):
     def __init__(self, size=(50, 50), frame_rate=60, scale=10, controller=None):
         super().__init__('Snake Game', size, frame_rate=frame_rate, scale=scale, controller=controller)
 
     def update(self, game_inst):
-        if not game_inst.update():
+        game_inst.update()
+        if game_inst.win():
+            self.status = GameStatus.EGameVictory
+            return
+        elif game_inst.dead():
             self.status = GameStatus.EGameOver
             return
         game_inst.eat()
