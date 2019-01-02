@@ -1,10 +1,10 @@
 from game import GameStatus, Game
+from simple_ai import SimpleAI
 import cv2
 import sys
 import argparse
 import pickle
 import random as rand
-import time
 
 def dist(p1, p2):
     return (p1[0]-p2[0])**2 + (p1[1]-p2[1])**2
@@ -45,9 +45,12 @@ class Snake():
         return 0 <= self.x < self.size[0] and 0 <= self.y < self.size[1] and (self.x, self.y) not in self.tail
 
     def create_candy(self):
-        num = rand.randint(0, self.size[0] * self.size[1]-1)
-        while num != (self.x * self.size[0] + self.y):
-            num = rand.randint(0, self.size[0] * self.size[1]-1)
+        getNum = lambda pt: pt[1] * self.size[0] + pt[0]
+        max_num = self.size[0] * self.size[1] - 1
+        invalid = list(map(getNum, self.tail))
+        num = rand.randint(0, max_num)
+        while num in invalid:
+            num = rand.randint(0, max_num)
         self.candy = (num % self.size[0], int(num/ self.size[0]))
 
     def eat(self):
@@ -89,19 +92,7 @@ class SnakeGame(Game):
         elif key == ord('l'):
             game_inst.dir(1, 0)
 
-
-def SimpleAI(inst):
-    key = cv2.waitKey(1)
-    if key in [ord('q'), ord('p'), 27]:
-        return key
-    if inst.xspeed == 0:
-        if (inst.y + inst.yspeed) < 0 or (inst.y + inst.yspeed) >= inst.size[1]:
-            return ord('j') if inst.x > 0 else ord('l')
-    else:
-        if (inst.x + inst.xspeed) < 0 or (inst.x + inst.xspeed) >= inst.size[0]:
-            return ord('i') if inst.y > 0 else ord('k')
-    return 0xFF
-
+AI_LIST={'SimpleAI': SimpleAI}
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Play Snake Game')
@@ -118,11 +109,8 @@ if __name__ == '__main__':
             obj = pickle.load(fin)
         size = obj.size
     else:
-        obj = Snake(game.size)
+        obj = Snake(size)
 
-    controller = None
-    if args.ai:
-        controller = SimpleAI
-
+    controller = AI_LIST.get(args.ai, None)
     game = SnakeGame(size=size, frame_rate=args.fps, scale=args.scale, controller=controller)
     game.start(obj)
