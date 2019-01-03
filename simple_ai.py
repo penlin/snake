@@ -2,7 +2,7 @@ import cv2
 
 def SimpleAI(inst):
     key = cv2.waitKey(1)
-    if key in [ord('q'), ord('p'), 27]:
+    if key in [ord('q'), ord('p'), ord('s'), 27]:
         return key
     if inst.xspeed == 0:
         if (inst.y + inst.yspeed) < 0 or (inst.y + inst.yspeed) >= inst.size[1]:
