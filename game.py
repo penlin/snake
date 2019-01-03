@@ -62,8 +62,9 @@ class Game(abc.ABC):
                 self.onKeyPressed(key, game_inst)
 
         self.show(canvas, game_inst)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()        
+        key = cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        return key
 
     def show(self, canvas, game_inst):
         self.drawMain(canvas)

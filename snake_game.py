@@ -1,16 +1,13 @@
 from game import GameStatus, Game
+from utils import same_pos
 from simple_ai import SimpleAI
+from smart_ai import get_smart_ai
 import cv2
 import sys
 import argparse
 import pickle
 import random as rand
 
-def dist(p1, p2):
-    return (p1[0]-p2[0])**2 + (p1[1]-p2[1])**2
-
-def same_pos(p1, p2):
-    return dist(p1, p2) < 1
 
 class Snake():
     def __init__(self, size, x=-1, y=-1):
@@ -102,6 +99,25 @@ class SnakeGame(Game):
 
 AI_LIST={'SimpleAI': SimpleAI}
 
+def get_ai(name, size):
+    controller = None
+    if name == 'SimpleAI':
+        controller = SimpleAI
+    elif name == 'SmartAI':
+        controller = get_smart_ai(size)
+    return controller
+
+def get_snake_obj(args):
+    size = tuple(map(int, args.size.split('x')))
+    if args.record:
+        with open(args.record, 'rb') as fin:
+            obj = pickle.load(fin)
+        size = obj.size
+    else:
+        obj = Snake(size)
+    return obj
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Play Snake Game')
     parser.add_argument('--resume', dest='record',
@@ -111,14 +127,9 @@ if __name__ == '__main__':
     parser.add_argument('--scale', default=15, type=int, help='grid size')
     parser.add_argument('--ai', help='AI name to run the Snake Game')
     args = parser.parse_args()
-    size = tuple(map(int, args.size.split('x')))
-    if args.record:
-        with open(args.record, 'rb') as fin:
-            obj = pickle.load(fin)
-        size = obj.size
-    else:
-        obj = Snake(size)
-
-    controller = AI_LIST.get(args.ai, None)
-    game = SnakeGame(size=size, frame_rate=args.fps, scale=args.scale, controller=controller)
-    game.start(obj)
+    key = ord('r')
+    while key == ord('r'):
+        obj = get_snake_obj(args)
+        controller = get_ai(args.ai, obj.size)
+        game = SnakeGame(size=obj.size, frame_rate=args.fps, scale=args.scale, controller=controller)
+        key = game.start(obj)
