@@ -77,12 +77,12 @@ class SnakeGame(Game):
 
     def draw(self, canvas, game_inst):
         for pt in game_inst.tail:
-            self.rect(canvas, pt[0], pt[1], (150, 160, 200))
-        self.rect(canvas, game_inst.x , game_inst.y, (200, 210, 255))
-        self.rect(canvas, game_inst.candy[0], game_inst.candy[1], (0, 0, 255))
+            self.rect(canvas, pt[0], pt[1], (90, 100, 150))
+        self.rect(canvas, game_inst.x , game_inst.y, (255, 255, 255))
+        self.ball(canvas, game_inst.candy[0], game_inst.candy[1], (0, 0, 255))
         win_w = int(self.size[0] * self.scl)
-        win_h = int((self.size[1] * self.scl + self.h)/2)
-        cv2.putText(canvas, 'Score:{}'.format(len(game_inst.tail)), (win_w - 100, win_h), cv2.FONT_HERSHEY_PLAIN, 1, (200, 200, 255), 1)
+        win_h = int((self.size[1] * self.scl + self.h)/2 + self.scl)
+        cv2.putText(canvas, 'Score:{}'.format(len(game_inst.tail)), (self.scl * 2, win_h), cv2.FONT_HERSHEY_PLAIN, 1, (200, 200, 255), 1)
 
     def onKeyPressed(self, key, game_inst):
         if key == ord('s'):

@@ -77,6 +77,12 @@ class Game(abc.ABC):
         width = int(self.scl * 3 / 4)
         cv2.rectangle(canvas, (left, top), (left + width, top + width), color, -1)
 
+    def ball(self, canvas, x, y, color):
+        cx = int(x * self.scl + self.scl / 2)
+        cy = int(y * self.scl + self.scl / 2)
+        radius = int(self.scl / 2)
+        cv2.circle(canvas, (cx, cy), radius, color, -1)
+
     def drawMain(self, canvas):
         win_w = int(self.size[0] * self.scl)
         win_h = int(self.size[1] * self.scl)
@@ -86,7 +92,7 @@ class Game(abc.ABC):
             status = '[{}]: {}'.format(self._time, self.status)
         else:
             status = '[{}]: Game Ended, press any key to exit ...'.format(self._time)
-        cv2.putText(canvas, status, (self.scl * 5, int((win_h + self.h)/2)), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(canvas, status, (self.scl * 2, int((win_h + self.h)/2)), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
     @abc.abstractmethod
     def update(self, game_inst):
