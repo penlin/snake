@@ -78,6 +78,8 @@ class SnakeGame(Game):
     def draw(self, canvas, game_inst):
         for pt in game_inst.tail:
             self.rect(canvas, pt[0], pt[1], (90, 100, 150))
+        if len(game_inst.tail) > 1:
+            self.rect(canvas, game_inst.tail[0][0], game_inst.tail[0][1], (60, 100, 60))
         self.rect(canvas, game_inst.x , game_inst.y, (255, 255, 255))
         self.ball(canvas, game_inst.candy[0], game_inst.candy[1], (0, 0, 255))
         win_w = int(self.size[0] * self.scl)
