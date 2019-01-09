@@ -2,6 +2,7 @@ from game import GameStatus, Game
 from utils import same_pos
 from simple_ai import SimpleAI
 from smart_ai import get_smart_ai
+from bfs_ai import get_bfs_ai
 from trace_tail_ai import get_trace_tail_ai
 import cv2
 import sys
@@ -108,6 +109,8 @@ def get_ai(name, size):
         controller = SimpleAI
     elif name == 'SmartAI':
         controller = get_smart_ai(size)
+    elif name == 'BFSAI':
+        controller = get_bfs_ai(size)
     elif name == 'TraceTailAI':
         controller = get_trace_tail_ai(size)
     return controller

@@ -37,3 +37,4 @@ optional arguments:
   1. __SimpleAI__: which would only go to the border and circling through the border. It only can win the game when Snake Board size if _Nx2_ or _2xN_
   2. __SmartAI__: which would aggresively run to the candy to would die easily when it grows longer by running into itself
   3. __TraceTailAI__: which would run to the candy base on __SmartAI__ but ensuring the head has route to its lase tail brick
+  4. __BFSAI__ : which take strategy like __SmartAI__ but using BFS map to calculate the distance to the candy instead of euclidean distance. It may die when the candy can not seen and there are body grids located in border
