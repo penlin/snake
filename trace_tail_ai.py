@@ -3,9 +3,9 @@ import numpy as np
 from utils import dist
 from queue import Queue  
 
-def tail_bfs(res, size, block, tail):
+def tail_bfs(res, size, tail):
     q = Queue()
-    res[tail[1]][tail[0]] = 3
+    res[tail[1]][tail[0]] = 2
     q.put(tail)
     dirs = [(0, 1), (0, -1), (1, 0), (-1, 0)]
     while not q.empty():
@@ -14,19 +14,17 @@ def tail_bfs(res, size, block, tail):
             n = (pt[0] + d[0], pt[1] + d[1])
             if 0 <= n[0] < size[0] and 0 <= n[1] < size[1]:
                 if res[n[1]][n[0]] == 0:
-                    if n in block:
-                        res[n[1]][n[0]] = 2
-                    else:
-                        res[n[1]][n[0]] = 3
-                        q.put(n)
+                    res[n[1]][n[0]] = 2
+                    q.put(n)
 
 
 def tail_bfs_map(size, inst):
     if len(inst.tail) < 2:
          return [[3 for _ in range(size[0])] for _ in range(size[1])]
     res = [[0 for _ in range(size[0])] for _ in range(size[1])]
-    block = [(inst.x, inst.y)] + inst.tail[1:]
-    tail_bfs(res, size, block, inst.tail[1])
+    for pt in [(inst.x, inst.y)] + inst.tail[1:]:
+        res[pt[1]][pt[0]] = 1
+    tail_bfs(res, size, inst.tail[1])
     return res
 
 def get_trace_tail_ai(size):
@@ -48,9 +46,9 @@ def get_trace_tail_ai(size):
         min_key = 0xFF
         for key, pos in valid_candidate.items():
             val = dist(pos, inst.candy)
-            if tail_map[pos[1]][pos[0]] != 3 and val < 1:
+            if tail_map[pos[1]][pos[0]] != 2 and val < 1:
                 return key
-            if tail_map[pos[1]][pos[0]] == 3 and val < min_val:
+            if tail_map[pos[1]][pos[0]] == 2 and val < min_val:
                 min_val = val
                 min_key = key
         if min_key == 0xFF:
