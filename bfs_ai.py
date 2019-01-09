@@ -46,7 +46,7 @@ def get_bfs_ai(size):
         candy_map = candy_bfs_map(size, inst)
         for key, pos in valid_candidate.items():
             val = candy_map[pos[1]][pos[0]]
-            if val > 0 and val < min_val:
+            if val > 1 and val < min_val:
                 min_val = val
                 min_key = key
         if min_key == 0xFF:
