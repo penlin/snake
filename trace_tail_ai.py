@@ -1,5 +1,3 @@
-import cv2
-import numpy as np
 from utils import dist
 from queue import Queue  
 from random import choice
@@ -37,9 +35,6 @@ def bfs_maps(size, inst, blocks):
 
 def get_trace_tail_ai(size):
     def trace_tail_ai(inst):
-        key = cv2.waitKey(1)
-        if key in [ord('q'), ord('p'), ord('s'), 27]:
-            return key
         candidate = {ord('j'): (-1, 0), ord('i'): (0, -1), ord('l'): (1, 0), ord('k'): (0, 1)}
         valid_candidate = {}
         blocks = [(inst.x, inst.y)] + inst.tail[1:]

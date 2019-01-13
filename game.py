@@ -1,5 +1,6 @@
 import abc
 import enum
+import pickle
 from cv2_displayer import CV2_Cursor
 
 class GameStatus(enum.Enum):
@@ -39,7 +40,7 @@ class Game(abc.ABC):
                 if self.status in [GameStatus.EGameOver, GameStatus.EGameVictory]:
                     break
             self.display(game_inst)
-            key = self.controller(game_inst)
+            key = self.brain(game_inst)
             if key == ord('p'):
                 if self.status == GameStatus.EGamePause:
                     self.status = GameStatus.EGameStart
@@ -47,6 +48,9 @@ class Game(abc.ABC):
                     self.status = GameStatus.EGamePause
             elif key in [ord('q'), 27]:
                 self.status = GameStatus.EGameStop
+            elif key == ord('s'):
+                with open('record.tmp', 'wb') as ftmp:
+                    pickle.dump(game_inst, ftmp)
             elif (key & 0xFF) != 0xFF:
                 self.onKeyPressed(key, game_inst)
 
@@ -64,7 +68,14 @@ class Game(abc.ABC):
         self.screen = CV2_Cursor(self._title, self.width, self.height, self.scl)
         if self.controller is None:
             delay = int(1000/self.fps)
-            self.controller = lambda inst: self.screen.waitKey(delay)
+            self.brain = lambda inst: self.screen.waitKey(delay)
+        else: 
+            def _handler(inst):
+                key = self.screen.waitKey(1)
+                if key in (ord('q'), ord('p'), ord('s'), 27):
+                    return key
+                return self.controller(inst)
+            self.brain = _handler
 
     def show(self, game_inst):
         self.drawMain()

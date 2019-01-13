@@ -1,13 +1,8 @@
-import cv2
-import numpy as np
 from utils import dist
 
 
 def get_smart_ai(size):
     def smart_ai(inst):
-        key = cv2.waitKey(1)
-        if key in [ord('q'), ord('p'), ord('s'), 27]:
-            return key
         candidate = {ord('j'): (-1, 0), ord('i'): (0, -1), ord('l'): (1, 0), ord('k'): (0, 1)}
         valid_candidate = {}
         for key, speed in candidate.items():

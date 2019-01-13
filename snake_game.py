@@ -88,10 +88,7 @@ class SnakeGame(Game):
         self.screen.text(score_msg, (2, (self.height + self.size[1]) // 2 + 1), (200, 200, 255))
 
     def onKeyPressed(self, key, game_inst):
-        if key == ord('s'):
-            with open('record.tmp', 'wb') as ftmp:
-                pickle.dump(game_inst, ftmp)
-        elif key == ord('i'):
+        if key == ord('i'):
             game_inst.dir(0, -1)
         elif key == ord('k'):
             game_inst.dir(0, 1)
