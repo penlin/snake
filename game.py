@@ -1,7 +1,6 @@
-import cv2
-import numpy as np
 import abc
 import enum
+from cv2_displayer import CV2_Cursor
 
 class GameStatus(enum.Enum):
     EGameNotInit = 'NotInit',
@@ -24,32 +23,22 @@ class Game(abc.ABC):
     def __init__(self, title, size, frame_rate=50, scale=50, controller=None):
         self._title = title
         self.size = size
-        self.scl = scale
         self.status = GameStatus.EGameReady
-        self.display = self.show
-        if frame_rate <= 0:
-            self.display = lambda *x: None
-        if controller is None:
-            delay = int(1000/frame_rate)
-            self.controller = lambda inst: cv2.waitKey(delay)
-        else:
-            self.controller = controller
+        self.scl = scale
+        self.fps = frame_rate
+        self.controller = controller
 
     def start(self, game_inst, start_time=0):
         self.status = GameStatus.EGameStart
+        self._init_io()
         self._time = start_time
-        cv2.namedWindow(self._title)
-        cv2.moveWindow(self._title, 200, 0)
-        self.w = int(self.size[0] * self.scl)
-        self.h = int((self.size[1] + self._status_bar_height) * self.scl)
-        canvas = np.zeros((self.h, self.w, 3), dtype=np.int8)
         while self.status != GameStatus.EGameStop:
             if self.status == GameStatus.EGameStart:
                 self._time = self._time + 1
                 self.update(game_inst)
                 if self.status in [GameStatus.EGameOver, GameStatus.EGameVictory]:
                     break
-            self.display(canvas, game_inst)
+            self.display(game_inst)
             key = self.controller(game_inst)
             if key == ord('p'):
                 if self.status == GameStatus.EGamePause:
@@ -61,45 +50,42 @@ class Game(abc.ABC):
             elif (key & 0xFF) != 0xFF:
                 self.onKeyPressed(key, game_inst)
 
-        self.show(canvas, game_inst)
-        key = cv2.waitKey(0)
-        cv2.destroyAllWindows()
-        return key
+        self.show(game_inst)
+        return self.screen.waitKey(0)
 
-    def show(self, canvas, game_inst):
-        self.drawMain(canvas)
-        self.draw(canvas, game_inst)
-        cv2.imshow(self._title, canvas)
+    def _init_io(self):
+        self.width = self.size[0]
+        self.height = self.size[1] + self._status_bar_height
+        if self.fps <= 0:
+            self.display = lambda *x: None
+        else:
+            self.display = self.show
 
-    def rect(self, canvas, x, y, color):
-        left = int(x * self.scl)
-        top = int(y * self.scl)
-        width = int(self.scl * 3 / 4)
-        cv2.rectangle(canvas, (left, top), (left + width, top + width), color, -1)
+        self.screen = CV2_Cursor(self._title, self.width, self.height, self.scl)
+        if self.controller is None:
+            delay = int(1000/self.fps)
+            self.controller = lambda inst: self.screen.waitKey(delay)
 
-    def ball(self, canvas, x, y, color):
-        cx = int(x * self.scl + self.scl / 2)
-        cy = int(y * self.scl + self.scl / 2)
-        radius = int(self.scl / 2)
-        cv2.circle(canvas, (cx, cy), radius, color, -1)
+    def show(self, game_inst):
+        self.drawMain()
+        self.draw(game_inst)
+        self.screen.show()
 
-    def drawMain(self, canvas):
-        win_w = int(self.size[0] * self.scl)
-        win_h = int(self.size[1] * self.scl)
-        cv2.rectangle(canvas, (0, 0), (win_w, win_h), (0, 0, 0), -1)
-        cv2.rectangle(canvas, (0, win_h), (win_w, self.h), (30, 30, 30), -1)
+    def drawMain(self):
+        self.screen.rect((0, 0), self.size, (0, 0, 0))
+        self.screen.rect((0, self.size[1]), (self.size[0], self.height), (30, 30, 30))
         if self.status != GameStatus.EGameStop:
             status = '[{}]: {}'.format(self._time, self.status)
         else:
             status = '[{}]: Game Ended, press any key to exit ...'.format(self._time)
-        cv2.putText(canvas, status, (self.scl * 2, int((win_h + self.h)/2)), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        self.screen.text(status, (2, (self.size[1] + self.height) // 2), (255, 255, 255))
 
     @abc.abstractmethod
     def update(self, game_inst):
         pass
 
     @abc.abstractmethod
-    def draw(self, canvas, game_inst):
+    def draw(self, game_inst):
         pass
 
     @abc.abstractmethod
