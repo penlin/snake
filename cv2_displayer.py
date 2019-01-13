@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 
-class CV2_Cursor(object):
+class CV2_Screen(object):
     def __init__(self, title, width, height, scale=50):
         self.title = title
         self.w = width
@@ -46,3 +46,5 @@ class CV2_Cursor(object):
 
     def waitKey(self, timeout=0):
         return cv2.waitKey(timeout)
+
+
