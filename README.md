@@ -1,6 +1,12 @@
 ## Snake 
 ### Requirement 
-* require python 3 with library ``opencv`` and ``numpy``
+* require python 3 with library ``asciimatics`` for terminal display
+```
+pip3 install asciimatics
+```
+
+* require python 3 with library ``opencv`` and ``numpy`` for window display
+  * if ``opencv`` is not installed, game would be played on terminal by default
 ```
 conda install opencv numpy 
 ```

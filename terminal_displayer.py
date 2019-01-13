@@ -79,6 +79,7 @@ class Terminal_Screen(object):
         self.title = title
         self.w = width
         self.h = height
+        self.scl = 2
         self.screen = Screen.open(height, catch_interrupt=False, unicode_aware=None)
         if self.screen.colours < 16:
             self._rgb_to_color = self._rgb_to_8
@@ -106,19 +107,19 @@ class Terminal_Screen(object):
 
     def grid(self, pt, color, linewidth=-1):
         left, top = pt
-        self.screen.print_at('██', pt[0] * 2, pt[1], colour=self._rgb_to_color(color), bg=self._rgb_to_color((0, 0, 0)))
+        self.screen.print_at('█' * self.scl, pt[0] * self.scl, pt[1], colour=self._rgb_to_color(color), bg=self._rgb_to_color((0, 0, 0)))
     
     def ball(self, center, color, linewidth=-1):
-        self.screen.print_at('◄►', center[0] * 2, center[1], colour=self._rgb_to_color(color), bg=self._rgb_to_color((0, 0, 0)))
+        self.screen.print_at('◄►', center[0] * self.scl, center[1], colour=self._rgb_to_color(color), bg=self._rgb_to_color((0, 0, 0)))
 
     def rect(self, lt, br, color, linewidth=-1):
-        left = lt[0] * 2
-        strip = '  ' * (br[0] - lt[0])
+        left = lt[0] * self.scl
+        strip = ' ' * (br[0] - lt[0]) * self.scl
         for y in range(lt[1], br[1]):
             self.screen.print_at(strip, left, y, bg=self._rgb_to_color(color))
     
     def text(self, msg, pos, color):
-        self.screen.print_at(msg, pos[0] * 2, pos[1], colour=self._rgb_to_color(color))
+        self.screen.print_at(msg, pos[0] * self.scl, pos[1], colour=self._rgb_to_color(color))
 
     def show(self):
         self.screen.refresh()

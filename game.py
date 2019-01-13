@@ -1,8 +1,10 @@
 import abc
 import enum
 import pickle
-from cv2_displayer import CV2_Screen
-from terminal_displayer import Terminal_Screen
+try:
+    from cv2_displayer import CV2_Screen as Screen
+except ImportError:
+    from terminal_displayer import Terminal_Screen as Screen
 
 class GameStatus(enum.Enum):
     EGameNotInit = 'NotInit',
@@ -66,8 +68,7 @@ class Game(abc.ABC):
         else:
             self.display = self.show
 
-        #self.screen = CV2_Screen(self._title, self.width, self.height, self.scl)
-        self.screen = Terminal_Screen(self._title, self.width, self.height, self.scl)
+        self.screen = Screen(self._title, self.width, self.height, self.scl)
         if self.controller is None:
             delay = int(1000/self.fps)
             self.brain = lambda inst: self.screen.waitKey(delay)
