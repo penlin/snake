@@ -97,7 +97,6 @@ class SnakeGame(Game):
         elif key == ord('l'):
             game_inst.dir(1, 0)
 
-AI_LIST={'SimpleAI': SimpleAI}
 
 def get_ai(name, size):
     controller = None
